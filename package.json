@@ -1,8 +1,17 @@
 {
   "name": "restudio",
-  "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
+  "homepage": "https://github.com/gepheum/restudio#readme",
+  "bugs": {
+    "url": "https://github.com/gepheum/restudio/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gepheum/soiac.git"
+  },
+  "license": "ISC",
+  "author": "Tyler Fibonacci <gepheum@gmail.com>",
   "main": "app.js",
   "module": "app.js",
   "type": "module",
@@ -11,16 +20,13 @@
     "build:watch": "tsc --watch",
     "test": "mocha",
     "clean": "rimraf my-element.{d.ts,d.ts.map,js,js.map} test/my-element.{d.ts,d.ts.map,js,js.map} test/my-element_test.{d.ts,d.ts.map,js,js.map}",
-    "lint": "npm run lint:lit-analyzer && npm run lint:eslint",
-    "lint:eslint": "eslint 'src/**/*.ts'",
-    "lint:lit-analyzer": "lit-analyzer",
+    "lint": "lit-analyzer",
     "format": "prettier \"src/**/*.{cjs,html,js,json,md,ts}\" --ignore-path ./.prettierignore --write",
     "format:check": "prettier \"src/**/*.{cjs,html,js,json,md,ts}\" --ignore-path ./.prettierignore --check",
-    "build:standalone": "npm run build && rollup -c rollup.standalone.config.js",
+    "bundle": "npm run build && rollup -c rollup.standalone.config.js",
     "analyze": "cem analyze --litelement --globs \"src/**/*.ts\"",
     "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --watch",
-    "serve": "npm run build && wds --watch",
-    "build:static": "npm run build && npm run build:bundle"
+    "serve": "npm run build && wds --watch"
   },
   "dependencies": {
     "@codemirror/buildhelper": "^1.0.2",
@@ -39,13 +45,10 @@
     "@rollup/plugin-replace": "^5.0.7",
     "@rollup/plugin-terser": "^0.4.4",
     "@types/mocha": "^10.0.10",
-    "@typescript-eslint/eslint-plugin": "^5.25.0",
-    "@typescript-eslint/parser": "^5.25.0",
     "@web/dev-server": "^0.4.6",
     "@web/dev-server-import-maps": "^0.2.1",
     "@web/dev-server-legacy": "^1.0.0",
     "@webcomponents/webcomponentsjs": "^2.8.0",
-    "eslint": "^8.15.0",
     "lit-analyzer": "^2.0.3",
     "mocha": "^11.7.1",
     "prettier": "^2.8.8",

@@ -5,10 +5,7 @@ import { customElement } from "lit/decorators.js";
 
 @customElement("restudio-editor")
 export class Editor extends LitElement {
-  static override styles = css`
-    :host {
-    }
-  `;
+  static override styles = css``;
 
   override render(): TemplateResult {
     return html`<div id="container"></div>`;
