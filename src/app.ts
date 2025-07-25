@@ -16,45 +16,301 @@ import type { Json, TypeDefinition } from "./json/types.js";
 export class App extends LitElement {
   static override styles = css`
     :host {
-      display: flex;
+      display: block;
       height: 100vh;
       width: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+      overflow: hidden;
     }
 
-    :host .hidden {
+    .app {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #f8fafc;
+      margin: 0;
+    }
+
+    h1 {
+      margin: 0;
+      padding: 1.5rem 2rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-size: 1.75rem;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .service-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: end;
+      padding: 1.5rem 2rem;
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      min-width: 200px;
+      flex: 1;
+    }
+
+    .input-group.url-input {
+      flex: 2;
+      min-width: 300px;
+    }
+
+    label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 0.25rem;
+    }
+
+    input[type="text"] {
+      padding: 0.75rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+      background: white;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .method-section {
+      padding: 1rem 2rem;
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    select {
+      padding: 0.75rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      background: white;
+      min-width: 200px;
+      transition: all 0.2s ease;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .content-section {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .request-panel, .response-panel {
+      flex: 1 1 50%;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      background: white;
+      border-right: 1px solid #e2e8f0;
+    }
+
+    .response-panel {
+      border-right: none;
+    }
+
+    .panel-header {
+      padding: 1rem 1.5rem;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      font-weight: 600;
+      color: #374151;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-content {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    restudio-editor {
+      height: 100%;
+      display: block;
+    }
+
+    button {
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .send-button {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+    }
+
+    .send-button:hover {
+      box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+    }
+
+    .error {
+      padding: 1rem 1.5rem;
+      background: #fef2f2;
+      color: #dc2626;
+      border-left: 4px solid #dc2626;
+      margin: 1rem 2rem;
+      border-radius: 0 0.5rem 0.5rem 0;
+      font-size: 0.875rem;
+    }
+
+    .hidden {
       display: none;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      color: #6b7280;
+      font-style: italic;
+    }
+
+    .zero-state {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+      color: #9ca3af;
+      text-align: center;
+      font-size: 0.875rem;
+    }
+
+    @media (max-width: 1024px) {
+      .content-section {
+        flex-direction: column;
+      }
+
+      .request-panel, .response-panel {
+        border-right: none;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .response-panel {
+        border-bottom: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .service-section {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .input-group {
+        min-width: unset;
+      }
+
+      h1 {
+        padding: 1rem;
+        font-size: 1.5rem;
+      }
     }
   `;
 
   override render(): TemplateResult {
     return html` <div class="app">
       <h1>RESTudio</h1>
-      ${this.renderServiceUrlSelector()} ${this.renderContent()}
+      ${this.renderServiceUrlSelector()} 
+      ${this.renderContent()}
     </div>`;
   }
 
   private renderContent(): TemplateResult {
     const { methodList, selectedMethod } = this;
-    if (methodList.kind === "zero-state" || methodList.kind === "loading") {
-      return html``;
+    if (methodList.kind === "zero-state") {
+      return html`<div class="zero-state">
+        Enter a service URL above and click "Fetch methods" to get started
+      </div>`;
+    } else if (methodList.kind === "loading") {
+      return html`<div class="loading">Loading methods...</div>`;
     } else if (methodList.kind === "error") {
       return html`<div class="error">${methodList.message}</div>`;
     }
     return html`
       ${this.renderMethodSelector(methodList.methods)}
-      <restudio-editor id="request-editor"></restudio-editor>
-      <button @click=${() => this.onSend()}>Send</button>
-      <restudio-editor
-        id="response-editor"
-        class=${classMap({
+      <div class="content-section">
+        <div class="request-panel">
+          <div class="panel-header">
+            Request
+            <button class="send-button" @click=${() => this.onSend()}>
+              Send Request
+            </button>
+          </div>
+          <div class="panel-content">
+            <restudio-editor id="request-editor"></restudio-editor>
+          </div>
+        </div>
+        <div class="response-panel ${classMap({
           hidden: !selectedMethod || selectedMethod.response.kind !== "ok",
-        })}
-      ></restudio-editor>
-      ${selectedMethod && selectedMethod.response.kind === "error"
-        ? html`<div class="error">
-            ${selectedMethod.response.message}
-          </div>`
-        : ""}
+        })}">
+          <div class="panel-header">Response</div>
+          <div class="panel-content">
+            <restudio-editor id="response-editor"></restudio-editor>
+          </div>
+        </div>
+        ${selectedMethod && selectedMethod.response.kind === "loading"
+          ? html`<div class="response-panel">
+              <div class="panel-header">Response</div>
+              <div class="loading">Sending request...</div>
+            </div>`
+          : ""}
+        ${selectedMethod && selectedMethod.response.kind === "error"
+          ? html`<div class="response-panel">
+              <div class="panel-header">Response</div>
+              <div class="error">${selectedMethod.response.message}</div>
+            </div>`
+          : ""}
+      </div>
     `;
   }
 
@@ -81,23 +337,32 @@ export class App extends LitElement {
       this.fetchMethodList();
     };
 
-    return html` <label for="service-url">Service URL:</label>
-      <input
-        type="text"
-        id="service-url"
-        .value="${this.serviceSpec.serviceUrl}"
-      />
+    return html`<div class="service-section">
+      <div class="input-group url-input">
+        <label for="service-url">Service URL</label>
+        <input
+          type="text"
+          id="service-url"
+          placeholder="https://api.example.com"
+          .value="${this.serviceSpec.serviceUrl}"
+        />
+      </div>
 
-      <label for="authorization-header">Authorization Header:</label>
-      <input
-        type="text"
-        autocomplete="off"
-        placeholder="Bearer {token}"
-        id="authorization-header"
-        .value="${this.serviceSpec.authorizationHeader}"
-      />
+      <div class="input-group">
+        <label for="authorization-header">Authorization Header</label>
+        <input
+          type="text"
+          autocomplete="off"
+          placeholder="Bearer your-token-here"
+          id="authorization-header"
+          .value="${this.serviceSpec.authorizationHeader}"
+        />
+      </div>
 
-      <button @click=${onClick}>Fetch methods</button>`;
+      <div class="input-group">
+        <button @click=${onClick}>Fetch Methods</button>
+      </div>
+    </div>`;
   }
 
   private renderMethodSelector(
@@ -108,8 +373,12 @@ export class App extends LitElement {
       const index = parseInt(select.value);
       this.selectMethod(methods[index]);
     };
-    return html`<label for="method">Method:</label>
+    return html`<div class="method-section">
+      <label for="method">Select Method</label>
       <select id="method" @change=${onChange}>
+        <option value="" ?selected=${!this.selectedMethod}>
+          Choose a method...
+        </option>
         ${methods.map(
           (method, index) =>
             html`<option
@@ -120,7 +389,8 @@ export class App extends LitElement {
               ${method.method.method}
             </option>`,
         )}
-      </select>`;
+      </select>
+    </div>`;
   }
 
   protected override firstUpdated(): void {
@@ -230,7 +500,16 @@ export class App extends LitElement {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        let errorMessage = `HTTP error ${response.status}`;
+        try {
+          const responseBody = await response.text();
+          if (responseBody) {
+            errorMessage += `: ${responseBody}`;
+          }
+        } catch (bodyError) {
+          // If we can't read the body, just use the status
+        }
+        throw new Error(errorMessage);
       }
       const data = (await response.json()) as Json;
       const respEditorState = createRespEditorState(data, method.response);
