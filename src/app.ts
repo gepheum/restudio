@@ -442,6 +442,7 @@ export class App extends LitElement {
         error instanceof Error ? error.message : "Unknown error occurred";
       this.methodList = { kind: "error", message };
     }
+    this.selectedMethod = undefined;
   }
 
   private selectMethod(method: MethodBundle): void {
