@@ -7,6 +7,7 @@ if (!["dev", "prod"].includes(mode)) {
 }
 
 export default {
+  port: 8080,
   nodeResolve: { exportConditions: mode === "dev" ? ["development"] : [] },
   preserveSymlinks: true,
   plugins: [

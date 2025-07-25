@@ -14,9 +14,9 @@ export function jsonCompletion(
 ): (context: CompletionContext) => CompletionResult | null {
   // Index record definitions by record id.
   const idToRecordDef: { [id: string]: RecordDefinition } = {};
-  schema.records.forEach((record) => {
+  for (const record of schema.records) {
     idToRecordDef[record.id] = record;
-  });
+  }
 
   function doCompleteJson(
     jsonValue: JsonValue,

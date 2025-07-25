@@ -1,4 +1,5 @@
 import { primitiveSerializer } from "soia";
+import { parseJsonValue } from "./json_parser";
 import { toJson } from "./to_json";
 import type {
   FieldDefinition,
@@ -18,9 +19,9 @@ export function validateSchema(
   schema: TypeDefinition,
 ): ValidationResult {
   const idToRecordDef: { [id: string]: RecordDefinition } = {};
-  schema.records.forEach((record) => {
+  for (const record of schema.records) {
     idToRecordDef[record.id] = record;
-  });
+  }
 
   const validator = new SchemaValidator(idToRecordDef);
   validator.validate(value, schema.type);
@@ -28,6 +29,28 @@ export function validateSchema(
     errors: validator.errors,
     typeHints: validator.typeHints,
   };
+}
+
+export function validateOrThrowError(
+  jsonCode: string,
+  schema: TypeDefinition,
+): void {
+  // TODO: show line/col numbers in error messages instead of position
+
+  const parseResult = parseJsonValue(jsonCode);
+  if (parseResult.kind === "errors") {
+    const firstError = parseResult.errors[0];
+    const { message, segment } = firstError;
+    throw new Error(`JSON parsing error at ${segment.start}: ${message}`);
+  }
+
+  const validationResult = validateSchema(parseResult, schema);
+  const { errors } = validationResult;
+  if (errors.length) {
+    const firstError = errors[0];
+    const { message, segment } = firstError;
+    throw new Error(`Schema validation error at ${segment.start}: ${message}`);
+  }
 }
 
 class SchemaValidator {

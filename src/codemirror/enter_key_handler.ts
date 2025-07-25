@@ -40,9 +40,9 @@ export function enterKeyHandler(schema: TypeDefinition) {
         const jsonValue: JsonValue = parseResult;
 
         const idToRecordDef: { [id: string]: RecordDefinition } = {};
-        schema.records.forEach((record) => {
+        for (const record of schema.records) {
           idToRecordDef[record.id] = record;
-        });
+        }
         const type = findTypeByLeftBracketPos(
           jsonValue,
           cursorPos - 1,
@@ -67,15 +67,16 @@ export function enterKeyHandler(schema: TypeDefinition) {
               null,
               2,
             );
+            if (codeToInsert === "{}") {
+              return false;
+            }
             // Remove the curly brackets at the start and end of the string and
             // unindent each line.
-            if (codeToInsert !== "{}") {
-              codeToInsert = codeToInsert
-                .split("\n")
-                .slice(1, -1)
-                .map((line) => line.substring(2))
-                .join("\n");
-            }
+            codeToInsert = codeToInsert
+              .split("\n")
+              .slice(1, -1)
+              .map((line) => line.substring(2))
+              .join("\n");
           } else {
             // Enum
             codeToInsert = ['"kind": "",', '"value": {}'].join("\n");
