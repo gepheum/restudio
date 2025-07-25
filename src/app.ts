@@ -149,12 +149,14 @@ export class App extends LitElement {
 
     .panel-content {
       flex: 1;
-      overflow: hidden;
+      overflow: auto;
+      min-height: 0;
     }
 
     restudio-editor {
       height: 100%;
       display: block;
+      min-height: 200px;
     }
 
     button {
@@ -199,9 +201,17 @@ export class App extends LitElement {
       background: #fef2f2;
       color: #dc2626;
       border-left: 4px solid #dc2626;
-      margin: 1rem 2rem;
+      margin: 1rem;
       border-radius: 0 0.5rem 0.5rem 0;
       font-size: 0.875rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .panel-content .error {
+      margin: 1rem 1.5rem;
+      max-height: 300px;
+      overflow-y: auto;
     }
 
     .hidden {
@@ -271,7 +281,7 @@ export class App extends LitElement {
     const { methodList, selectedMethod } = this;
     if (methodList.kind === "zero-state") {
       return html`<div class="zero-state">
-        Enter a service URL above and click "Fetch methods" to get started
+        Enter a service URL above and click "Fetch Methods" to get started
       </div>`;
     } else if (methodList.kind === "loading") {
       return html`<div class="loading">Loading methods...</div>`;
