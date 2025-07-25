@@ -16,7 +16,7 @@
     "lint:lit-analyzer": "lit-analyzer",
     "format": "prettier \"src/**/*.{cjs,html,js,json,md,ts}\" --ignore-path ./.prettierignore --write",
     "format:check": "prettier \"src/**/*.{cjs,html,js,json,md,ts}\" --ignore-path ./.prettierignore --check",
-    "build:bundle": "rollup -c",
+    "build:standalone": "npm run build && rollup -c rollup.standalone.config.js",
     "analyze": "cem analyze --litelement --globs \"src/**/*.ts\"",
     "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --watch",
     "serve": "npm run build && wds --watch",
