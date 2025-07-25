@@ -19,7 +19,8 @@ export class App extends LitElement {
       display: block;
       height: 100vh;
       width: 100%;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: #333;
       overflow: hidden;
@@ -121,7 +122,8 @@ export class App extends LitElement {
       overflow: hidden;
     }
 
-    .request-panel, .response-panel {
+    .request-panel,
+    .response-panel {
       flex: 1 1 50%;
       min-width: 0;
       display: flex;
@@ -230,7 +232,8 @@ export class App extends LitElement {
         flex-direction: column;
       }
 
-      .request-panel, .response-panel {
+      .request-panel,
+      .response-panel {
         border-right: none;
         border-bottom: 1px solid #e2e8f0;
       }
@@ -260,8 +263,7 @@ export class App extends LitElement {
   override render(): TemplateResult {
     return html` <div class="app">
       <h1>RESTudio</h1>
-      ${this.renderServiceUrlSelector()} 
-      ${this.renderContent()}
+      ${this.renderServiceUrlSelector()} ${this.renderContent()}
     </div>`;
   }
 
@@ -280,19 +282,28 @@ export class App extends LitElement {
       ${this.renderMethodSelector(methodList.methods)}
       <div class="content-section">
         <div class="request-panel">
-          <div class="panel-header">
+          <div
+            class=${classMap({ "panel-header": true, hidden: !selectedMethod })}
+          >
             Request
             <button class="send-button" @click=${() => this.onSend()}>
               Send Request
             </button>
           </div>
-          <div class="panel-content">
+          <div
+            class=${classMap({
+              "panel-content": true,
+              hidden: !selectedMethod,
+            })}
+          >
             <restudio-editor id="request-editor"></restudio-editor>
           </div>
         </div>
-        <div class="response-panel ${classMap({
-          hidden: !selectedMethod || selectedMethod.response.kind !== "ok",
-        })}">
+        <div
+          class="response-panel ${classMap({
+            hidden: !selectedMethod || selectedMethod.response.kind !== "ok",
+          })}"
+        >
           <div class="panel-header">Response</div>
           <div class="panel-content">
             <restudio-editor id="response-editor"></restudio-editor>
@@ -370,8 +381,13 @@ export class App extends LitElement {
   ): TemplateResult {
     const onChange = (event: Event) => {
       const select = event.target as HTMLSelectElement;
-      const index = parseInt(select.value);
-      this.selectMethod(methods[index]);
+      if (select.value === "") {
+        // This is he "Choose a method..." option
+        this.selectedMethod = undefined;
+      } else {
+        const index = parseInt(select.value);
+        this.selectMethod(methods[index]);
+      }
     };
     return html`<div class="method-section">
       <label for="method">Select Method</label>
