@@ -1,9 +1,4 @@
-import type {
-  Json,
-  JsonValue,
-  RecordDefinition,
-  TypeSignature,
-} from "./types";
+import type { Json, JsonValue, RecordDefinition, TypeSignature } from "./types";
 
 export function toJson(value: JsonValue): Json {
   switch (value.kind) {
@@ -18,7 +13,7 @@ export function toJson(value: JsonValue): Json {
         Object.values(value.keyValues).map((keyValue) => [
           keyValue.key,
           toJson(keyValue.value),
-        ])
+        ]),
       );
     }
   }
@@ -27,7 +22,7 @@ export function toJson(value: JsonValue): Json {
 export function makeJsonTemplate(
   type: TypeSignature,
   idToRecordDef: { [id: string]: RecordDefinition },
-  depth?: "depth"
+  depth?: "depth",
 ): Json {
   switch (type.kind) {
     case "array": {
@@ -46,7 +41,7 @@ export function makeJsonTemplate(
           recordDef.fields.map((field) => [
             field.name,
             makeJsonTemplate(field.type!, idToRecordDef, "depth"),
-          ])
+          ]),
         );
       } else {
         // Enum

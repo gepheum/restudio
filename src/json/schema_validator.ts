@@ -1,4 +1,5 @@
 import { primitiveSerializer } from "soia";
+import { toJson } from "./to_json";
 import type {
   FieldDefinition,
   JsonError,
@@ -11,11 +12,10 @@ import type {
   TypeSignature,
   ValidationResult,
 } from "./types";
-import { toJson } from "./to_json";
 
 export function validateSchema(
   value: JsonValue,
-  schema: TypeDefinition
+  schema: TypeDefinition,
 ): ValidationResult {
   const idToRecordDef: { [id: string]: RecordDefinition } = {};
   schema.records.forEach((record) => {
@@ -145,7 +145,7 @@ class SchemaValidator {
 
   validateEnumObject(
     object: JsonObject,
-    nameToFieldDef: { [name: string]: FieldDefinition }
+    nameToFieldDef: { [name: string]: FieldDefinition },
   ): void {
     const kindKv = object.keyValues["kind"];
     if (!kindKv) {
@@ -197,7 +197,7 @@ class SchemaValidator {
 
 function hasPrimitiveType(
   value: JsonValue,
-  expectedType: PrimitiveType
+  expectedType: PrimitiveType,
 ): boolean {
   switch (expectedType) {
     case "bool":

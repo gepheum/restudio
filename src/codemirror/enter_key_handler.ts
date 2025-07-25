@@ -1,6 +1,7 @@
 import { EditorView, keymap } from "@codemirror/view";
 import { parseJsonValue } from "../json/json_parser";
 import { validateSchema } from "../json/schema_validator";
+import { makeJsonTemplate } from "../json/to_json";
 import {
   ArrayTypeSignature,
   JsonValue,
@@ -8,7 +9,6 @@ import {
   RecordTypeSignature,
   TypeDefinition,
 } from "../json/types";
-import { makeJsonTemplate } from "../json/to_json";
 
 /**
  * Triggered when the Enter key is pressed between 2 consecutive curly braces or
@@ -46,7 +46,7 @@ export function enterKeyHandler(schema: TypeDefinition) {
         const type = findTypeByLeftBracketPos(
           jsonValue,
           cursorPos - 1,
-          idToRecordDef
+          idToRecordDef,
         );
         if (type === null) {
           return false;
@@ -57,7 +57,7 @@ export function enterKeyHandler(schema: TypeDefinition) {
           codeToInsert = JSON.stringify(
             makeJsonTemplate(type.value.item, idToRecordDef),
             null,
-            2
+            2,
           );
         } else if (type.kind === "record") {
           const recordDef = idToRecordDef[type.value];
@@ -65,7 +65,7 @@ export function enterKeyHandler(schema: TypeDefinition) {
             codeToInsert = JSON.stringify(
               makeJsonTemplate(type, idToRecordDef),
               null,
-              2
+              2,
             );
             // Remove the curly brackets at the start and end of the string and
             // unindent each line.
@@ -88,7 +88,7 @@ export function enterKeyHandler(schema: TypeDefinition) {
         // Indent the code to insert based on the current line's indentation
         const lineIndentation = getLineIndentation(
           state.doc.toString(),
-          cursorPos - 1
+          cursorPos - 1,
         );
         codeToInsert = indent(codeToInsert, "  " + lineIndentation);
 
@@ -114,7 +114,7 @@ export function enterKeyHandler(schema: TypeDefinition) {
 function findTypeByLeftBracketPos(
   jsonValue: JsonValue,
   leftBracketPos: number,
-  idToRecordDef: { [id: string]: RecordDefinition }
+  idToRecordDef: { [id: string]: RecordDefinition },
 ): ArrayTypeSignature | RecordTypeSignature | null {
   let { expectedType } = jsonValue;
   if (!expectedType) {
@@ -138,7 +138,7 @@ function findTypeByLeftBracketPos(
         const maybeResult = findTypeByLeftBracketPos(
           element,
           leftBracketPos,
-          idToRecordDef
+          idToRecordDef,
         );
         if (maybeResult) {
           return maybeResult;
@@ -161,7 +161,7 @@ function findTypeByLeftBracketPos(
           const maybeResult = findTypeByLeftBracketPos(
             keyValue.value,
             leftBracketPos,
-            idToRecordDef
+            idToRecordDef,
           );
           if (maybeResult) {
             return maybeResult;
@@ -173,7 +173,7 @@ function findTypeByLeftBracketPos(
           const maybeResult = findTypeByLeftBracketPos(
             valueKv.value,
             leftBracketPos,
-            idToRecordDef
+            idToRecordDef,
           );
           if (maybeResult) {
             return maybeResult;

@@ -5,7 +5,7 @@ import { validateSchema } from "../json/schema_validator";
 import { JsonError, TypeDefinition, TypeHint } from "../json/types";
 
 export function jsonLinter(
-  schema: TypeDefinition
+  schema: TypeDefinition,
 ): (view: EditorView) => Diagnostic[] {
   function lintJson(view: EditorView): Diagnostic[] {
     const jsonCode = view.state.doc.toString();

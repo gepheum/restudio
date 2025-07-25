@@ -10,7 +10,7 @@ import {
 } from "../json/types";
 
 export function jsonCompletion(
-  schema: TypeDefinition
+  schema: TypeDefinition,
 ): (context: CompletionContext) => CompletionResult | null {
   // Index record definitions by record id.
   const idToRecordDef: { [id: string]: RecordDefinition } = {};
@@ -20,7 +20,7 @@ export function jsonCompletion(
 
   function doCompleteJson(
     jsonValue: JsonValue,
-    position: number
+    position: number,
   ): CompletionResult | null {
     let { expectedType } = jsonValue;
     if (!expectedType) {
@@ -54,7 +54,7 @@ export function jsonCompletion(
             if (inSegment(position, keyValue.segment)) {
               const missingFieldNames = collectMissingFieldNames(
                 jsonValue,
-                recordDef
+                recordDef,
               );
               return {
                 from: keyValue.segment.start + 1,
@@ -150,7 +150,7 @@ function inSegment(position: number, segment: Segment): boolean {
 
 function collectMissingFieldNames(
   object: JsonObject,
-  recordDef: RecordDefinition
+  recordDef: RecordDefinition,
 ): string[] {
   const result: string[] = [];
   for (const field of recordDef.fields) {
