@@ -38,7 +38,7 @@ export class App extends LitElement {
     if (methodList.kind === "zero-state" || methodList.kind === "loading") {
       return html``;
     } else if (methodList.kind === "error") {
-      return html`<div>Error: ${methodList.message}</div>`;
+      return html`<div class="error">${methodList.message}</div>`;
     }
     return html`
       ${this.renderMethodSelector(methodList.methods)}
@@ -46,22 +46,46 @@ export class App extends LitElement {
       <button @click=${() => this.onSend()}>Send</button>
       <restudio-editor
         id="response-editor"
-        class=${classMap({ hidden: !selectedMethod || selectedMethod.response.kind !== "ok" })}
+        class=${classMap({
+          hidden: !selectedMethod || selectedMethod.response.kind !== "ok",
+        })}
       ></restudio-editor>
+      ${selectedMethod && selectedMethod.response.kind === "error"
+        ? html`<div class="error">
+            ${selectedMethod.response.message}
+          </div>`
+        : ""}
     `;
   }
 
   private renderServiceUrlSelector(): TemplateResult {
-    return html`<label for="service-url">Service URL:</label>
+    const onClick = () => {
+      let serviceUrl =
+        this.renderRoot.querySelector<HTMLInputElement>("#service-url")!.value;
+      try {
+        const url = new URL(serviceUrl);
+        url.search = "";
+        url.hash = "";
+        serviceUrl = url.toString();
+      } catch {}
+
+      const authorizationHeader =
+        this.renderRoot.querySelector<HTMLInputElement>(
+          "#authorization-header",
+        )!.value;
+
+      this.serviceSpec = {
+        serviceUrl,
+        authorizationHeader,
+      };
+      this.fetchMethodList();
+    };
+
+    return html` <label for="service-url">Service URL:</label>
       <input
         type="text"
         id="service-url"
-        .value="${getDefaultServiceUrl()}"
-        @keydown=${(event: KeyboardEvent) => {
-          if (event.key === "Enter") {
-            this.fetchMethodList();
-          }
-        }}
+        .value="${this.serviceSpec.serviceUrl}"
       />
 
       <label for="authorization-header">Authorization Header:</label>
@@ -70,12 +94,10 @@ export class App extends LitElement {
         autocomplete="off"
         placeholder="Bearer {token}"
         id="authorization-header"
-        @keydown=${(event: KeyboardEvent) => {
-          if (event.key === "Enter") {
-            this.fetchMethodList();
-          }
-        }}
-      /> `;
+        .value="${this.serviceSpec.authorizationHeader}"
+      />
+
+      <button @click=${onClick}>Fetch methods</button>`;
   }
 
   private renderMethodSelector(
@@ -102,18 +124,22 @@ export class App extends LitElement {
   }
 
   protected override firstUpdated(): void {
-    this.fetchMethodList();
+    // See if the URL has a "restudio" query parameter
+    const thisUrl = new URL(document.location.href);
+    if (thisUrl.searchParams.has("restudio")) {
+      this.fetchMethodList();
+    }
   }
 
   private async fetchMethodList(): Promise<void> {
-    const { serviceUrl } = this;
+    const { serviceUrl, authorizationHeader } = this.serviceSpec;
     if (
       this.methodList.kind === "loading" &&
       this.methodList.serviceUrl === serviceUrl
     ) {
       return;
     }
-    const listUrl = new URL(this.serviceUrl);
+    const listUrl = new URL(serviceUrl);
     listUrl.search = "list";
     this.methodList = { kind: "loading", serviceUrl };
     try {
@@ -121,15 +147,19 @@ export class App extends LitElement {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: this.authorizationHeader,
+          Authorization: authorizationHeader,
         },
       });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data = (await response.json()) as MethodList;
-      const methods = data.methods.map((method) => ({
+      const data = await response.text();
+      const methodList = tryParseMethodList(data);
+      if (methodList === null) {
+        throw new Error("The URL does not seem to point to a soia service");
+      }
+      const methods = methodList.methods.map((method) => ({
         method,
         reqEditorState: createReqEditorState(method.request),
         response: { kind: "zero-state" } as ResponseState,
@@ -167,6 +197,7 @@ export class App extends LitElement {
   }
 
   private async onSend(): Promise<void> {
+    const { serviceUrl, authorizationHeader } = this.serviceSpec;
     const { requestEditor, responseEditor } = this;
     if (!requestEditor || !responseEditor) {
       console.warn("Editors not found, cannot send request.");
@@ -182,11 +213,11 @@ export class App extends LitElement {
       const reqJsonCode = requestEditor.state.doc.toString();
       validateOrThrowError(reqJsonCode, method.request);
       const reqJson = JSON.parse(reqJsonCode);
-      const response = await fetch(this.serviceUrl, {
+      const response = await fetch(serviceUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: this.authorizationHeader,
+          Authorization: authorizationHeader,
         },
         body: JSON.stringify(
           {
@@ -221,21 +252,14 @@ export class App extends LitElement {
   }
 
   @state()
+  private serviceSpec: ServiceSpec = {
+    serviceUrl: getDefaultServiceUrl(),
+    authorizationHeader: "",
+  };
+  @state()
   private methodList: MethodListState = { kind: "zero-state" };
   @state()
   private selectedMethod?: MethodBundle;
-
-  private get serviceUrl() {
-    return this.renderRoot.querySelector<HTMLInputElement>(
-      "#service-url",
-    )!.value;
-  }
-
-  private get authorizationHeader() {
-    return this.renderRoot.querySelector<HTMLInputElement>(
-      "#authorization-header",
-    )!.value;
-  }
 
   private get requestEditor(): Editor | null {
     return this.renderRoot.querySelector<Editor>("#request-editor");
@@ -244,7 +268,11 @@ export class App extends LitElement {
   private get responseEditor(): Editor | null {
     return this.renderRoot.querySelector<Editor>("#response-editor");
   }
-  // private methodBundles: {[number: number]: MethodBundle} = {};
+}
+
+interface ServiceSpec {
+  serviceUrl: string;
+  authorizationHeader: string;
 }
 
 interface Method {
@@ -297,6 +325,19 @@ type MethodListState =
       kind: "error";
       message: string;
     };
+
+function tryParseMethodList(jsonCode: string): MethodList | null {
+  try {
+    const data = JSON.parse(jsonCode);
+    if (data && Array.isArray(data.methods)) {
+      return data as MethodList;
+    } else {
+      return null;
+    }
+  } catch {
+    return null;
+  }
+}
 
 function getDefaultServiceUrl(): string {
   const currentUrl = new URL(document.location.href);
