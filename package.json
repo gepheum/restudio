@@ -1,6 +1,6 @@
 {
   "name": "restudio",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "description": "",
   "homepage": "https://github.com/gepheum/restudio#readme",
   "bugs": {
@@ -10,6 +10,11 @@
     "type": "git",
     "url": "git+https://github.com/gepheum/soiac.git"
   },
+  "files": [
+    "dist/restudio-standalone.js",
+    "src/",
+    "README.md"
+  ],
   "license": "ISC",
   "author": "Tyler Fibonacci <gepheum@gmail.com>",
   "main": "app.js",
@@ -26,7 +31,8 @@
     "bundle": "npm run build && rollup -c rollup.standalone.config.js",
     "analyze": "cem analyze --litelement --globs \"src/**/*.ts\"",
     "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --watch",
-    "serve": "npm run build && wds --watch"
+    "serve": "npm run build && wds --watch",
+    "prepublishOnly": "npm run bundle"
   },
   "dependencies": {
     "@codemirror/buildhelper": "^1.0.2",
