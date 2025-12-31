@@ -22,11 +22,13 @@ export function jsonCompletion(
     jsonValue: JsonValue,
     position: number,
   ): CompletionResult | null {
-    let { expectedType } = jsonValue;
+    const { expectedType } = jsonValue;
     if (!expectedType) {
       return null;
     }
-    expectedType.kind === "optional" ? expectedType.value : expectedType;
+    const actualType =
+      expectedType.kind === "optional" ? expectedType.value : expectedType;
+    void actualType;
     switch (jsonValue.kind) {
       case "array": {
         if (expectedType.kind !== "array") {
@@ -65,7 +67,7 @@ export function jsonCompletion(
               };
             }
             // Then, check the value.
-            let maybeResult = doCompleteJson(keyValue.value, position);
+            const maybeResult = doCompleteJson(keyValue.value, position);
             if (maybeResult) {
               return maybeResult;
             }

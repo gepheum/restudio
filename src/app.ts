@@ -453,7 +453,7 @@ export class App extends LitElement {
       const data = await response.text();
       const methodList = tryParseMethodList(data);
       if (methodList === null) {
-        throw new Error("The URL does not seem to point to a soia service");
+        throw new Error("The URL does not seem to point to a skir service");
       }
       const methods = methodList.methods.map((method) => ({
         method,

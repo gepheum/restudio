@@ -66,7 +66,7 @@ export interface Segment {
 // SCHEMA
 // -----------------------------------------------------------------------------
 
-/** A soia schema. */
+/** A skir schema. */
 export type TypeDefinition = {
   type: TypeSignature;
   records: readonly RecordDefinition[];

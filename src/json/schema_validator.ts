@@ -1,4 +1,4 @@
-import { primitiveSerializer } from "soia";
+import { primitiveSerializer } from "skir-client";
 import { parseJsonValue } from "./json_parser";
 import { toJson } from "./to_json";
 import type {
@@ -60,8 +60,8 @@ class SchemaValidator {
 
   validate(value: JsonValue, schema: TypeSignature): void {
     value.expectedType = schema;
-    const pushTypeHint = () =>
-      this.typeHints.push({
+    const pushTypeHint = (): void =>
+      void this.typeHints.push({
         segment: value.segment,
         typeDesc: getTypeDesc(schema),
       });

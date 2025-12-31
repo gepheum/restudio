@@ -1,6 +1,6 @@
 {
   "name": "restudio",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "homepage": "https://github.com/gepheum/restudio#readme",
   "bugs": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gepheum/soiac.git"
+    "url": "git+https://github.com/gepheum/restudio.git"
   },
   "files": [
     "dist/restudio-standalone.js",
@@ -23,9 +23,8 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
-    "test": "mocha",
     "clean": "rimraf my-element.{d.ts,d.ts.map,js,js.map} test/my-element.{d.ts,d.ts.map,js,js.map} test/my-element_test.{d.ts,d.ts.map,js,js.map}",
-    "lint": "lit-analyzer",
+    "lint": "eslint src/**/*.ts && lit-analyzer",
     "format": "prettier \"src/**/*.{cjs,html,js,json,md,ts}\" --ignore-path ./.prettierignore --write",
     "format:check": "prettier \"src/**/*.{cjs,html,js,json,md,ts}\" --ignore-path ./.prettierignore --check",
     "bundle": "npm run build && rollup -c rollup.standalone.config.js",
@@ -43,20 +42,22 @@
     "json5": "^2.2.3",
     "lit": "^3.2.0",
     "nanoevents": "^9.1.0",
-    "soia": "^1.1.7"
+    "skir-client": "^0.0.10"
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.6.3",
+    "@eslint/js": "^9.39.2",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-replace": "^5.0.7",
     "@rollup/plugin-terser": "^0.4.4",
-    "@types/mocha": "^10.0.10",
+    "@typescript-eslint/eslint-plugin": "^8.50.1",
+    "@typescript-eslint/parser": "^8.50.1",
     "@web/dev-server": "^0.4.6",
     "@web/dev-server-import-maps": "^0.2.1",
     "@web/dev-server-legacy": "^1.0.0",
     "@webcomponents/webcomponentsjs": "^2.8.0",
+    "eslint": "^9.39.2",
     "lit-analyzer": "^2.0.3",
-    "mocha": "^11.7.1",
     "prettier": "^2.8.8",
     "prettier-plugin-organize-imports": "^4.2.0",
     "rimraf": "^3.0.2",
@@ -64,7 +65,8 @@
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-summary": "^2.0.1",
     "ts-node": "^10.9.2",
-    "typescript": "~5.5.0"
+    "typescript": "~5.5.0",
+    "typescript-eslint": "^8.50.1"
   },
   "customElements": "custom-elements.json"
 }

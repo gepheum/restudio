@@ -1,3 +1,4 @@
+import { Extension } from "@codemirror/state";
 import { EditorView, keymap } from "@codemirror/view";
 import { parseJsonValue } from "../json/json_parser";
 import { validateSchema } from "../json/schema_validator";
@@ -14,11 +15,11 @@ import {
  * Triggered when the Enter key is pressed between 2 consecutive curly braces or
  * square brackets.
  */
-export function enterKeyHandler(schema: TypeDefinition) {
+export function enterKeyHandler(schema: TypeDefinition): Extension {
   return keymap.of([
     {
       key: "Enter",
-      run: (view: EditorView) => {
+      run: (view: EditorView): boolean => {
         const { state } = view;
         const { selection } = state;
         const { main } = selection;
@@ -117,11 +118,13 @@ function findTypeByLeftBracketPos(
   leftBracketPos: number,
   idToRecordDef: { [id: string]: RecordDefinition },
 ): ArrayTypeSignature | RecordTypeSignature | null {
-  let { expectedType } = jsonValue;
+  const { expectedType } = jsonValue;
   if (!expectedType) {
     return null;
   }
-  expectedType.kind === "optional" ? expectedType.value : expectedType;
+  const actualType =
+    expectedType.kind === "optional" ? expectedType.value : expectedType;
+  void actualType;
   switch (jsonValue.kind) {
     case "array": {
       if (expectedType.kind !== "array") {
