@@ -6,6 +6,7 @@ import {
   JsonValue,
   RecordDefinition,
   Segment,
+  StructDefinition,
   TypeDefinition,
 } from "../json/types";
 
@@ -80,10 +81,10 @@ export function jsonCompletion(
             kindKv.value.kind === "literal" &&
             kindKv.value.type === "string"
           ) {
-            const options = recordDef.fields
-              .filter((f) => f.type)
-              .map((f) => ({
-                label: f.name,
+            const options = recordDef.variants
+              .filter((v) => v.type)
+              .map((v) => ({
+                label: v.name,
               }));
             return {
               from: kindKv.value.segment.start + 1,
@@ -112,10 +113,10 @@ export function jsonCompletion(
         if (recordDef.kind !== "enum") {
           return null;
         }
-        const options = recordDef.fields
-          .filter((f) => !f.type)
-          .map((f) => ({
-            label: f.name,
+        const options = recordDef.variants
+          .filter((v) => !v.type)
+          .map((v) => ({
+            label: v.name,
           }))
           .concat({
             label: "?",
@@ -152,7 +153,7 @@ function inSegment(position: number, segment: Segment): boolean {
 
 function collectMissingFieldNames(
   object: JsonObject,
-  recordDef: RecordDefinition,
+  recordDef: StructDefinition,
 ): string[] {
   const result: string[] = [];
   for (const field of recordDef.fields) {

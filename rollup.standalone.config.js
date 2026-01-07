@@ -5,9 +5,9 @@ import replace from '@rollup/plugin-replace';
 export default {
   input: 'dist/app.js',
   output: {
-    file: 'dist/restudio-standalone.js',
+    file: 'dist/skir-studio-standalone.js',
     format: 'iife',
-    name: 'REStudio',
+    name: 'SkirStudio',
     sourcemap: true
   },
   plugins: [

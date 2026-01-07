@@ -12,7 +12,7 @@ import { Editor } from "./editor.js";
 import { validateOrThrowError } from "./json/schema_validator.js";
 import type { Json, TypeDefinition } from "./json/types.js";
 
-@customElement("restudio-app")
+@customElement("skir-studio-app")
 export class App extends LitElement {
   static override styles = css`
     :host {
@@ -153,7 +153,7 @@ export class App extends LitElement {
       min-height: 0;
     }
 
-    restudio-editor {
+    skir-studio-editor {
       height: 100%;
       display: block;
       min-height: 200px;
@@ -272,7 +272,7 @@ export class App extends LitElement {
 
   override render(): TemplateResult {
     return html` <div class="app">
-      <h1>RESTudio</h1>
+      <h1>Skir Studio</h1>
       ${this.renderServiceUrlSelector()} ${this.renderContent()}
     </div>`;
   }
@@ -306,7 +306,7 @@ export class App extends LitElement {
               hidden: !selectedMethod,
             })}
           >
-            <restudio-editor id="request-editor"></restudio-editor>
+            <skir-studio-editor id="request-editor"></skir-studio-editor>
           </div>
         </div>
         <div
@@ -316,7 +316,7 @@ export class App extends LitElement {
         >
           <div class="panel-header">Response</div>
           <div class="panel-content">
-            <restudio-editor id="response-editor"></restudio-editor>
+            <skir-studio-editor id="response-editor"></skir-studio-editor>
           </div>
         </div>
         ${selectedMethod && selectedMethod.response.kind === "loading"
@@ -420,9 +420,9 @@ export class App extends LitElement {
   }
 
   protected override firstUpdated(): void {
-    // See if the URL has a "restudio" query parameter
+    // See if the URL has a "skir-studio" query parameter
     const thisUrl = new URL(document.location.href);
-    if (thisUrl.searchParams.has("restudio")) {
+    if (thisUrl.searchParams.has("skir-studio")) {
       this.fetchMethodList();
     }
   }
@@ -656,6 +656,6 @@ function getDefaultServiceUrl(): string {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "restudio-app": App;
+    "skir-studio-app": App;
   }
 }

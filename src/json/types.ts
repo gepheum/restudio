@@ -66,22 +66,11 @@ export interface Segment {
 // SCHEMA
 // -----------------------------------------------------------------------------
 
-/** A skir schema. */
+/** JSON representation of a `TypeDescriptor`. */
 export type TypeDefinition = {
   type: TypeSignature;
   records: readonly RecordDefinition[];
 };
-
-export type PrimitiveType =
-  | "bool"
-  | "int32"
-  | "int64"
-  | "uint64"
-  | "float32"
-  | "float64"
-  | "timestamp"
-  | "string"
-  | "bytes";
 
 /** A type in the JSON representation of a `TypeDescriptor`. */
 export type TypeSignature =
@@ -96,35 +85,70 @@ export type TypeSignature =
       value: PrimitiveType;
     };
 
-export type ArrayTypeSignature = {
+export interface ArrayTypeSignature {
   kind: "array";
   value: {
     item: TypeSignature;
-    key_chain?: string;
+    key_extractor?: string;
   };
-};
+}
 
-export type RecordTypeSignature = {
+export interface RecordTypeSignature {
   kind: "record";
   value: string;
+}
+
+export type PrimitiveType =
+  | "bool"
+  | "int32"
+  | "int64"
+  | "hash64"
+  | "float32"
+  | "float64"
+  | "timestamp"
+  | "string"
+  | "bytes";
+
+export type RecordDefinition = StructDefinition | EnumDefinition;
+
+/** Definition of a struct in the JSON representation of a `TypeDescriptor`. */
+export type StructDefinition = {
+  kind: "struct";
+  id: string;
+  doc?: string;
+  fields: readonly FieldDefinition[];
+  removed_numbers?: readonly number[];
 };
 
 /**
- * Definition of a record field in the JSON representation of a
+ * Definition of a struct field in the JSON representation of a
  * `TypeDescriptor`.
  */
 export type FieldDefinition = {
   name: string;
-  type?: TypeSignature;
+  type: TypeSignature;
   number: number;
+  doc?: string;
 };
 
-/** Definition of a record in the JSON representation of a `TypeDescriptor`. */
-export type RecordDefinition = {
-  kind: "struct" | "enum";
+/** Definition of an enum in the JSON representation of a `TypeDescriptor`. */
+export type EnumDefinition = {
+  kind: "enum";
   id: string;
-  fields: readonly FieldDefinition[];
-  removed_fields?: ReadonlyArray<number>;
+  doc?: string;
+  variants: readonly VariantDefinition[];
+  removed_numbers?: readonly number[];
+};
+
+/**
+ * Definition of an enum variant in the JSON representation of a
+ * `TypeDescriptor`.
+ */
+export type VariantDefinition = {
+  name: string;
+  type?: TypeSignature;
+  number: number;
+  doc?: string;
 };
 
 // -----------------------------------------------------------------------------

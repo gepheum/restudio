@@ -47,7 +47,7 @@ function tokenize(input: string): JsonTokens | JsonError {
 
   const whitespaceRegex = /[ \t\r\n]*/y;
   const tokenRegex =
-    /([[\\]{}:,]|(-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?)|false|true|null|("(((?=\\)\\(["\\/ bfnrt]|u[0-9a-fA-F]{4}))|[^"\\\0-\x1F\x7F]+)*")|$)/y;
+    /([[\]{}:,]|(-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?)|false|true|null|("(((?=\\)\\(["\\/ bfnrt]|u[0-9a-fA-F]{4}))|[^"\\\0-\x1F\x7F]+)*")|$)/y;
 
   while (true) {
     whitespaceRegex.lastIndex = pos;

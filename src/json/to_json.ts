@@ -57,7 +57,7 @@ export function makeJsonTemplate(
         case "float64":
           return 0;
         case "int64":
-        case "uint64":
+        case "hash64":
           return "0";
         case "timestamp":
           return { unix_millis: 0 };

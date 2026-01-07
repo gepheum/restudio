@@ -12,6 +12,7 @@ import type {
   TypeHint,
   TypeSignature,
   ValidationResult,
+  VariantDefinition,
 } from "./types";
 
 export function validateSchema(
@@ -104,11 +105,11 @@ class SchemaValidator {
       }
       case "record": {
         const recordDef = this.idToRecordDef[schema.value];
-        const nameToFieldDef: { [name: string]: FieldDefinition } = {};
-        recordDef.fields.forEach((field) => {
-          nameToFieldDef[field.name] = field;
-        });
         if (recordDef.kind === "struct") {
+          const nameToFieldDef: { [name: string]: FieldDefinition } = {};
+          recordDef.fields.forEach((field) => {
+            nameToFieldDef[field.name] = field;
+          });
           if (value.kind === "object") {
             pushTypeHint();
 
@@ -134,12 +135,16 @@ class SchemaValidator {
           }
         } else {
           // Enum
+          const nameToVariantDef: { [name: string]: VariantDefinition } = {};
+          recordDef.variants.forEach((variant) => {
+            nameToVariantDef[variant.name] = variant;
+          });
           if (value.kind === "object") {
             pushTypeHint();
-            this.validateEnumObject(value, nameToFieldDef);
+            this.validateEnumObject(value, nameToVariantDef);
           } else if (value.kind === "literal" && value.type === "string") {
             const name = JSON.parse(value.jsonCode);
-            const fieldDef = nameToFieldDef[name];
+            const fieldDef = nameToVariantDef[name];
             if (name === "?" || fieldDef) {
               pushTypeHint();
             } else {
@@ -168,7 +173,7 @@ class SchemaValidator {
 
   validateEnumObject(
     object: JsonObject,
-    nameToFieldDef: { [name: string]: FieldDefinition },
+    nameToVariantDef: { [name: string]: VariantDefinition },
   ): void {
     const kindKv = object.keyValues["kind"];
     if (!kindKv) {
@@ -196,8 +201,8 @@ class SchemaValidator {
       });
       return;
     }
-    const fieldDef = nameToFieldDef[kind];
-    if (!fieldDef) {
+    const variantDef = nameToVariantDef[kind];
+    if (!variantDef) {
       this.errors.push({
         kind: "error",
         segment: kindKv.value.segment,
@@ -214,7 +219,7 @@ class SchemaValidator {
       });
       return;
     }
-    this.validate(valueKv.value, fieldDef.type!);
+    this.validate(valueKv.value, variantDef.type!);
   }
 }
 
@@ -231,7 +236,7 @@ function hasPrimitiveType(
     case "int64": {
       return isInteger(value, -9223372036854775808n, 9223372036854775807n);
     }
-    case "uint64": {
+    case "hash64": {
       return isInteger(value, 0n, 18446744073709551615n);
     }
     case "timestamp": {

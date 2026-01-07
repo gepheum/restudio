@@ -1,17 +1,17 @@
 {
-  "name": "restudio",
-  "version": "1.0.5",
+  "name": "skir-studio",
+  "version": "1.0.0",
   "description": "",
-  "homepage": "https://github.com/gepheum/restudio#readme",
+  "homepage": "https://github.com/gepheum/skir-studio#readme",
   "bugs": {
-    "url": "https://github.com/gepheum/restudio/issues"
+    "url": "https://github.com/gepheum/skir-studio/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gepheum/restudio.git"
+    "url": "git+https://github.com/gepheum/skir-studio.git"
   },
   "files": [
-    "dist/restudio-standalone.js",
+    "dist/skir-studio-standalone.js",
     "src/",
     "README.md"
   ],
@@ -31,6 +31,7 @@
     "analyze": "cem analyze --litelement --globs \"src/**/*.ts\"",
     "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --watch",
     "serve": "npm run build && wds --watch",
+    "test": "mocha",
     "prepublishOnly": "npm run bundle"
   },
   "dependencies": {
@@ -42,7 +43,7 @@
     "json5": "^2.2.3",
     "lit": "^3.2.0",
     "nanoevents": "^9.1.0",
-    "skir-client": "^0.0.10"
+    "skir-client": "^0.1.0"
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.6.3",
@@ -66,7 +67,11 @@
     "rollup-plugin-summary": "^2.0.1",
     "ts-node": "^10.9.2",
     "typescript": "~5.5.0",
-    "typescript-eslint": "^8.50.1"
+    "typescript-eslint": "^8.50.1",
+    "@types/mocha": "^10.0.1",
+    "buckwheat": "^1.1.2",
+    "mocha": "^11.7.5",
+    "tsx": "^4.21.0"
   },
   "customElements": "custom-elements.json"
 }

@@ -3,7 +3,7 @@ import { EditorView } from "@codemirror/view";
 import { css, html, LitElement, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
 
-@customElement("restudio-editor")
+@customElement("skir-studio-editor")
 export class Editor extends LitElement {
   static override styles = css``;
 
@@ -57,6 +57,6 @@ export class Editor extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "restudio-editor": Editor;
+    "skir-studio-editor": Editor;
   }
 }
